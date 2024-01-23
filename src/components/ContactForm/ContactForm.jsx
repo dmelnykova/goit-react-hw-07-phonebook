@@ -1,9 +1,11 @@
-import React from 'react';
 import { Formik, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Wrapper, Form, Button } from './ContactForm.styled';
-import contactsSlice, { selectContacts } from '../../redux/contactsSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { selectContacts, selectIsLoading } from '../../redux/selectors';
+import { addContacts } from '../../redux/operations';
+import * as Notiflix from 'notiflix';
+import toast from 'react-hot-toast';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().min(3, 'Too Short!').required('Required'),
@@ -16,21 +18,22 @@ const validationSchema = Yup.object().shape({
 });
 
 export const ContactForm = () => {
-  const contacts = useSelector(state => state.contacts.items);
+  const contacts = useSelector(selectContacts);
   const dispatch = useDispatch();
+  const isLoading = useSelector(selectIsLoading);
 
-  const onAdd = (values) => {
-    const { name } = values;
-    const isDuplicate = contacts.some(
-      (contact) => contact.name.toLowerCase() === name.toLowerCase()
+  const handleAddContact = values => {
+    const checkContact = contacts.some(
+      contact => contact.name.toLowerCase() === values.name.toLowerCase()
     );
 
-    if (isDuplicate) {
-      alert(`${name} is already in contacts.`);
+    if (checkContact) {
+      Notiflix.Report.warning('Contact has not been added.', `${values.name} is already in contacts.`);
       return;
     }
 
-    dispatch(contactsSlice.actions.addContact(values));
+    dispatch(addContacts(values));
+    toast.success('Successfully created!');
   };
 
   return (
@@ -41,7 +44,7 @@ export const ContactForm = () => {
           number: '',
         }}
         onSubmit={(values, actions) => {
-          onAdd(values);
+          handleAddContact(values);
           actions.resetForm();
         }}
         validationSchema={validationSchema}
