@@ -2,7 +2,7 @@ import { Formik, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { Wrapper, Form, Button } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectContacts, selectIsLoading } from '../../redux/selectors';
+import { selectContacts } from '../../redux/selectors';
 import { addContacts } from '../../redux/operations';
 import * as Notiflix from 'notiflix';
 import toast from 'react-hot-toast';
@@ -20,7 +20,6 @@ const validationSchema = Yup.object().shape({
 export const ContactForm = () => {
   const contacts = useSelector(selectContacts);
   const dispatch = useDispatch();
-  const isLoading = useSelector(selectIsLoading);
 
   const handleAddContact = values => {
     const checkContact = contacts.some(
