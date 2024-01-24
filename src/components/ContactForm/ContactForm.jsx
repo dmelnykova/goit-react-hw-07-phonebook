@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectContacts } from '../../redux/selectors';
 import { addContacts } from '../../redux/operations';
 import * as Notiflix from 'notiflix';
-import toast from 'react-hot-toast';
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().min(3, 'Too Short!').required('Required'),
@@ -32,7 +31,6 @@ export const ContactForm = () => {
     }
 
     dispatch(addContacts(values));
-    toast.success('Successfully created!');
   };
 
   return (
